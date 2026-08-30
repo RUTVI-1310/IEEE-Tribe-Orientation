@@ -2,20 +2,25 @@
    TOKENS
 --------------------------------------------------------- */
 :root{
-  --bg: #0A101C;
-  --bg-elev: #0F1A2B;
-  --panel: #121E33;
-  --panel-2: #16233C;
-  --line: #22334F;
-  --line-soft: #1A2740;
-  --cyan: #4FD8FF;
-  --cyan-dim: #1F5670;
-  --amber: #FFB454;
-  --amber-dim: #7A5326;
-  --text: #EAF2FB;
-  --muted: #7C93B3;
-  --muted-2: #4E6485;
-  --danger: #FF6B6B;
+  /* Deep PCB-green board tones instead of the more common navy —
+     paired with a warm copper primary accent (like solder traces)
+     and a fresh mint secondary, rather than the usual cyan/amber. */
+  --bg: #0B1512;
+  --bg-elev: #101F19;
+  --panel: #16271F;
+  --panel-2: #1D3327;
+  --line: #2C4B3B;
+  --line-soft: #22392C;
+  --cyan: #E8A15C;        /* now "copper" — kept var name so rules below still work */
+  --cyan-rgb: 232,161,92;
+  --cyan-dim: #6E4A26;
+  --amber: #6EE7B7;       /* now "mint" — secondary signal accent */
+  --amber-rgb: 110,231,183;
+  --amber-dim: #285A44;
+  --text: #F4EFE6;
+  --muted: #93AB9C;
+  --muted-2: #5C7568;
+  --danger: #FF6F6B;
 
   --font-display: 'Space Grotesk', sans-serif;
   --font-body: 'Inter', sans-serif;
@@ -31,7 +36,7 @@
   --device-shadow:
     0 0 0 1px rgba(255,255,255,0.02),
     0 40px 80px -30px rgba(0,0,0,0.7),
-    0 0 60px -20px rgba(79,216,255,0.08);
+    0 0 60px -20px rgba(var(--cyan-rgb),0.08);
   --outer-pad-x: 14px;
   --outer-pad-y: 28px;
   --safe-top: env(safe-area-inset-top, 0px);
@@ -66,7 +71,7 @@ body{
 
 a{ color: inherit; }
 button{ font-family: inherit; }
-::selection{ background: var(--cyan); color: #05141F; }
+::selection{ background: var(--cyan); color: #1C0F02; }
 
 :focus-visible{
   outline: 2px solid var(--cyan);
@@ -82,8 +87,8 @@ button{ font-family: inherit; }
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(ellipse 900px 500px at 15% -5%, rgba(79,216,255,0.10), transparent 60%),
-    radial-gradient(ellipse 700px 500px at 100% 100%, rgba(255,180,84,0.06), transparent 55%),
+    radial-gradient(ellipse 900px 500px at 15% -5%, rgba(var(--cyan-rgb),0.10), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 100%, rgba(var(--amber-rgb),0.06), transparent 55%),
     var(--bg);
   pointer-events: none;
 }
@@ -320,7 +325,7 @@ p{ margin: 0; }
   width: 100%;
 }
 .field select{
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237C93B3'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2393AB9C'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
 }
@@ -358,9 +363,9 @@ p{ margin: 0; }
 }
 .btn:active{ transform: scale(0.98); }
 .btn-primary{
-  background: linear-gradient(135deg, var(--cyan), #2FB6E0);
-  color: #04141E;
-  box-shadow: 0 10px 30px -10px rgba(79,216,255,0.5);
+  background: linear-gradient(135deg, var(--cyan), #C97A3D);
+  color: #1C0F02;
+  box-shadow: 0 10px 30px -10px rgba(var(--cyan-rgb),0.5);
 }
 .btn-primary:hover{ filter: brightness(1.08); }
 .btn-primary:disabled{
@@ -417,7 +422,7 @@ p{ margin: 0; }
 .trace-rail .node-wrap.current{
   background: var(--amber);
   border-color: var(--amber);
-  box-shadow: 0 0 0 4px rgba(255,180,84,0.18);
+  box-shadow: 0 0 0 4px rgba(var(--amber-rgb),0.18);
 }
 
 .q-meta{
@@ -463,7 +468,7 @@ p{ margin: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, transparent, rgba(79,216,255,0.08), transparent);
+  background: linear-gradient(120deg, transparent, rgba(var(--cyan-rgb),0.08), transparent);
   transform: translateX(-120%);
   transition: transform 0.5s ease;
 }
@@ -472,7 +477,7 @@ p{ margin: 0; }
     border-color: var(--cyan-dim);
     background: var(--panel-2);
     transform: translateY(-2px);
-    box-shadow: 0 12px 24px -14px rgba(79,216,255,0.35);
+    box-shadow: 0 12px 24px -14px rgba(var(--cyan-rgb),0.35);
   }
   .option-card:hover::before{ transform: translateX(120%); }
 }
@@ -480,7 +485,7 @@ p{ margin: 0; }
 .option-card.selected{
   border-color: var(--cyan);
   background: var(--panel-2);
-  box-shadow: 0 0 0 1px var(--cyan), 0 12px 24px -14px rgba(79,216,255,0.4);
+  box-shadow: 0 0 0 1px var(--cyan), 0 12px 24px -14px rgba(var(--cyan-rgb),0.4);
 }
 .option-icon{
   font-size: 20px;
@@ -596,7 +601,7 @@ p{ margin: 0; }
   position: absolute;
   top: -60%; left: -20%;
   width: 140%; height: 140%;
-  background: radial-gradient(circle, rgba(255,180,84,0.14), transparent 60%);
+  background: radial-gradient(circle, rgba(var(--amber-rgb),0.14), transparent 60%);
   pointer-events: none;
 }
 .result-icon{
@@ -609,7 +614,7 @@ p{ margin: 0; }
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 30px -8px rgba(255,180,84,0.4);
+  box-shadow: 0 0 30px -8px rgba(var(--amber-rgb),0.4);
 }
 .result-eyebrow{
   font-family: var(--font-mono);
@@ -644,7 +649,7 @@ p{ margin: 0; }
   font-size: 10.5px;
   letter-spacing: 0.03em;
   color: var(--cyan);
-  background: rgba(79,216,255,0.08);
+  background: rgba(var(--cyan-rgb),0.08);
   border: 1px solid var(--cyan-dim);
   padding: 5px 10px;
   border-radius: 999px;
