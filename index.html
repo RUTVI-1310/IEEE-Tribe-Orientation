@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+<title>Find Your IEEE Tribe — VGEC Student Branch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="backdrop">
+  <svg viewBox="0 0 500 900" preserveAspectRatio="none" aria-hidden="true">
+    <path class="trace" d="M0 120 H150 V260 H400 V80 H500" />
+    <path class="trace" d="M0 480 H90 V620 H320 V760 H500" />
+    <path class="trace" d="M60 0 V90 H260 V0" />
+    <path class="trace" d="M440 900 V760 H180 V900" />
+    <circle class="node" cx="150" cy="120" r="3"/>
+    <circle class="node" cx="400" cy="260" r="3"/>
+    <circle class="node" cx="90" cy="480" r="3"/>
+    <circle class="node" cx="320" cy="620" r="3"/>
+    <circle class="node" cx="260" cy="90" r="3"/>
+    <circle class="node" cx="180" cy="760" r="3"/>
+  </svg>
+</div>
+
+<main class="device" role="main">
+
+  <div class="chip-strip">
+    <span><span class="dot-live" aria-hidden="true"></span>IEEE · VGEC SB</span>
+    <span id="screen-tag">01 / ONBOARD</span>
+  </div>
+
+  <div class="screens">
+
+    <!-- ============================================================
+         SCREEN 1 — LANDING & ONBOARDING
+    ============================================================ -->
+    <section class="screen active" id="screen-1" aria-label="Onboarding">
+      <div class="sb-header">
+        <div class="sb-mark" aria-hidden="true">IE</div>
+        <div>
+          <div class="sb-text-line1">Student Branch</div>
+          <div class="sb-text-line2">VGEC · Ahmedabad</div>
+        </div>
+      </div>
+
+      <h1 class="hero-title">Find your<br><em>IEEE&nbsp;Tribe</em>.</h1>
+      <p class="hero-sub">Skip the committee names. Answer a few real scenarios and we'll trace the role that actually fits how you like to work.</p>
+
+      <div class="live-counter">
+        <span aria-hidden="true">⚡</span>
+        <span><span class="num" id="live-count">128</span> freshers have found their tribe today</span>
+      </div>
+
+      <div class="field-group">
+        <div class="field">
+          <label for="input-name">Your name</label>
+          <input type="text" id="input-name" placeholder="e.g. Aarav Patel" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="input-branch">Branch</label>
+          <select id="input-branch">
+            <option value="" disabled selected>Select your branch</option>
+            <option>Computer Engineering</option>
+            <option>Information Technology</option>
+            <option>Electronics &amp; Communication</option>
+            <option>Electrical Engineering</option>
+            <option>Mechanical Engineering</option>
+            <option>Civil Engineering</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field-error" id="form-error"></div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <button class="btn btn-primary" id="start-btn">Start the journey →</button>
+      <div class="footnote">5 quick scenarios · takes ~60 seconds</div>
+    </section>
+
+    <!-- ============================================================
+         SCREEN 2 — QUIZ INTERFACE
+    ============================================================ -->
+    <section class="screen" id="screen-2" aria-label="Quiz">
+      <div class="trace-rail" id="trace-rail" aria-hidden="true"></div>
+
+      <div class="q-meta">
+        <span class="q-count" id="q-count">QUESTION 1 / 5</span>
+      </div>
+      <h2 class="q-title" id="q-title"></h2>
+
+      <div class="option-list" id="option-list" role="group" aria-label="Answer options"></div>
+
+      <div class="q-nav">
+        <button class="btn btn-ghost" id="back-btn">← Back</button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SCREEN 3 — LOADING TRANSITION
+    ============================================================ -->
+    <section class="screen" id="screen-3" aria-label="Calculating result">
+      <div class="loader-wrap" style="margin: auto;">
+        <svg class="circuit-loader" id="circuit-loader" viewBox="0 0 200 200" aria-hidden="true">
+          <path class="board-line" d="M20 40 H80 V20 H160 V60 H100 V100 H180" />
+          <path class="board-line" d="M20 160 H60 V120 H140 V150 H100" />
+          <path class="signal" d="M20 40 H80 V20 H160 V60 H100 V100 H180" />
+          <circle class="pad" cx="20" cy="40" r="4"/>
+          <circle class="pad" cx="160" cy="20" r="4"/>
+          <circle class="pad" cx="180" cy="100" r="4"/>
+          <circle class="pad" cx="20" cy="160" r="4"/>
+          <rect class="chip-core" x="82" y="82" width="36" height="36" rx="6"/>
+        </svg>
+        <div>
+          <div class="loader-title">Routing your signal…</div>
+          <div class="loader-msg" id="loader-msg">reading response patterns</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SCREEN 4 — TRIBE REVEAL
+    ============================================================ -->
+    <section class="screen" id="screen-4" aria-label="Your IEEE tribe">
+      <div class="result-card">
+        <div class="result-icon" id="result-icon">🎨</div>
+        <div class="result-eyebrow">Your IEEE identity</div>
+        <h2 class="result-title" id="result-title">Visual Alchemist</h2>
+        <p class="result-desc" id="result-desc">You turn ideas into visuals that attract attention.</p>
+        <div class="traits-row" id="result-traits"></div>
+      </div>
+
+      <div class="fit-panel">
+        <div class="fit-panel-label">Best fit committee</div>
+        <div class="fit-name" id="fit-name">Design Committee</div>
+        <div class="mentor-row">
+          <div class="mentor-avatar" id="mentor-avatar">JD</div>
+          <div class="mentor-info" id="mentor-info"><b>Mentor:</b> reaches out post-orientation</div>
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="result-actions">
+        <button class="btn btn-ghost" id="restart-btn">Retake</button>
+        <button class="btn btn-primary" id="share-btn">Share result</button>
+      </div>
+      <div class="footnote" id="save-status">saved to IEEE VGEC records</div>
+    </section>
+
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
