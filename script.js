@@ -253,7 +253,7 @@
       ]
     }
   ];
-
+  var chartInstance = null;
   /* =========================================================
      STATE
   ========================================================= */
@@ -468,6 +468,73 @@
       chip.textContent = t;
       traitsEl.appendChild(chip);
     });
+    // Render Pie Chart with PCB design palette
+var ctx = document.getElementById("committeeChart").getContext("2d");
+if (chartInstance) {
+  chartInstance.destroy(); // Destroy previous instance if retaking quiz
+}
+
+var pieLabels = ["Design", "Drafting", "Media", "Program", "Tech", "Publicity"];
+var pieColors = [
+  "#E8A15C", // Copper
+  "#6EE7B7", // Mint
+  "#FF6F6B", // Coral/Danger
+  "#36A2EB", // Blue
+  "#9966FF", // Purple
+  "#FFCE56"  // Yellow
+];
+var pieData = [
+  result.totals.design || 0,
+  result.totals.drafting || 0,
+  result.totals.media || 0,
+  result.totals.program || 0,
+  result.totals.tech || 0,
+  result.totals.publicity || 0
+];
+
+chartInstance = new Chart(ctx, {
+  type: "pie",
+  data: {
+    labels: pieLabels,
+    datasets: [{
+      data: pieData,
+      backgroundColor: pieColors,
+      borderColor: "#16271F",
+      borderWidth: 2,
+      hoverBorderColor: "#F4EFE6",
+      hoverBorderWidth: 2,
+      hoverOffset: 10 // slices "pop" on tap/hover — the PCB pad-lift effect
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { animateScale: true, animateRotate: true, easing: "easeOutQuart" },
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: {
+          color: "#F4EFE6",
+          usePointStyle: true,
+          pointStyle: "circle",
+          padding: 12,
+          font: { family: "'IBM Plex Mono', monospace", size: 11 }
+        }
+      },
+      tooltip: {
+        backgroundColor: "#16271F",
+        borderColor: "#2C4B3B",
+        borderWidth: 1,
+        titleColor: "#F4EFE6",
+        bodyColor: "#93AB9C",
+        titleFont: { family: "'IBM Plex Mono', monospace" },
+        bodyFont: { family: "'IBM Plex Mono', monospace" },
+        padding: 10,
+        cornerRadius: 6
+      }
+    }
+  }
+});
 
     goTo(4, "04 / RESULT");
     submitResult(key, id, result.totals);
@@ -535,4 +602,3 @@
   });
 
 })();
-
