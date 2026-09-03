@@ -644,6 +644,7 @@ p{ margin: 0; }
   justify-content: center;
   margin-top: 16px;
 }
+
 .trait-chip{
   font-family: var(--font-mono);
   font-size: 10.5px;
@@ -717,7 +718,22 @@ p{ margin: 0; }
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
-
+.chart-container {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  aspect-ratio: 1 / 1.05;
+  margin: 18px auto 0;
+  padding: 14px;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 0 1px rgba(var(--cyan-rgb), .06), 0 0 24px rgba(var(--cyan-rgb), .14);
+  overflow: visible;
+}
+#committeeChart{
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,.45));
+}
 /* ---------------------------------------------------------
    RESPONSIVE — MOBILE
 --------------------------------------------------------- */
@@ -1169,4 +1185,3 @@ svg {
 .result-actions {
   max-width: 100%;
 }
-
