@@ -722,14 +722,14 @@ p{ margin: 0; }
   position: relative;
   width: 100%;
   max-width: 280px;
-  aspect-ratio: 1 / 1.05;
+  height: 260px;
   margin: 18px auto 0;
   padding: 14px;
   background: var(--bg-elev);
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   box-shadow: 0 0 0 1px rgba(var(--cyan-rgb), .06), 0 0 24px rgba(var(--cyan-rgb), .14);
-  overflow: visible;
+  overflow: hidden;
 }
 #committeeChart{
   filter: drop-shadow(0 4px 10px rgba(0,0,0,.45));
@@ -793,6 +793,7 @@ p{ margin: 0; }
   .live-counter{ margin-bottom: 16px; }
   .field-group{ margin-bottom: 14px; gap: 10px; }
   .result-card{ padding: 18px 18px; margin-bottom: 12px; }
+  .chart-container{ height: 230px; }
   .result-icon{ width: 60px; height: 60px; font-size: 32px; margin-bottom: 10px; }
   .circuit-loader{ width: 140px; height: 140px; }
 }
