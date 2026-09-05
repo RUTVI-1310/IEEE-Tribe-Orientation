@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -136,19 +135,15 @@
         <h2 class="result-title" id="result-title">Visual Alchemist</h2>
         <p class="result-desc" id="result-desc">You turn ideas into visuals that attract attention.</p>
         <div class="traits-row" id="result-traits"></div>
-        <div class="chart-container">
-          <canvas id="committeeChart"></canvas>
+        <div class="match-breakdown">
+          <div class="match-breakdown-label">Where your answers pointed</div>
+          <div class="match-bars" id="match-bars"></div>
         </div>
-        <div class="chart-legend" id="chart-legend"></div>
       </div>
 
       <div class="fit-panel">
         <div class="fit-panel-label">Best fit committee</div>
         <div class="fit-name" id="fit-name">Design Committee</div>
-        <div class="mentor-row">
-          <div class="mentor-avatar" id="mentor-avatar">JD</div>
-          <div class="mentor-info" id="mentor-info"><b>Mentor:</b> reaches out post-orientation</div>
-        </div>
       </div>
 
       <div class="spacer"></div>

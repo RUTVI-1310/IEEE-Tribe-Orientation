@@ -817,28 +817,7 @@ p{ margin: 0; }
   font-size: 15px;
   font-weight: 600;
   color: var(--text);
-  margin-bottom: 8px;
 }
-.mentor-row{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.mentor-avatar{
-  width: 30px; height: 30px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--cyan-dim), var(--panel-2));
-  border: 1px solid var(--line);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--cyan);
-  flex-shrink: 0;
-}
-.mentor-info{ font-size: 12.5px; color: var(--muted); line-height: 1.4; }
-.mentor-info b{ color: var(--text); font-weight: 500; }
 
 .result-actions{
   display: flex;
@@ -859,46 +838,106 @@ p{ margin: 0; }
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
-.chart-container {
-  position: relative;
-  width: 100%;
-  max-width: 200px;
-  aspect-ratio: 1 / 1;
-  min-height: 180px; /* fallback for browsers/contexts where aspect-ratio
-                        doesn't get a chance to resolve before layout */
-  margin: 14px auto 0;
-  padding: 10px;
+
+/* ---------------------------------------------------------
+   MATCH BREAKDOWN — sorted bar chart on the result screen
+   Replaces the old 6-slice pie chart + separate legend. A
+   ranked, labeled bar list needs no legend to decode: the
+   order and the percentage are both readable at a glance,
+   and the top match is called out directly instead of
+   requiring a color-matching exercise against a legend.
+--------------------------------------------------------- */
+.match-breakdown{
   background: var(--bg-elev);
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  box-shadow: 0 0 0 1px rgba(var(--cyan-rgb), .06), 0 0 24px rgba(var(--cyan-rgb), .14);
-  overflow: visible;
+  padding: 14px 16px 16px;
+  margin: 16px auto 0;
+  text-align: left;
+  box-shadow: 0 0 0 1px rgba(var(--cyan-rgb), .06), 0 0 24px rgba(var(--cyan-rgb), .12);
 }
-.chart-legend{
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px 12px;
-  margin: 12px auto 0;
-  max-width: 320px;
-}
-.legend-item{
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
+.match-breakdown-label{
   font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  margin-bottom: 13px;
 }
-.legend-item b{ color: var(--text); font-weight: 600; }
-.legend-dot{
-  width: 8px; height: 8px;
-  border-radius: 50%;
+.match-bars{
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.match-row{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.match-row-top{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.match-icon{
+  font-size: 15px;
+  width: 22px;
+  text-align: center;
   flex-shrink: 0;
 }
-#committeeChart{
-  filter: drop-shadow(0 4px 10px rgba(0,0,0,.45));
+.match-label{
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
 }
+.match-best-chip{
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #060A16;
+  background: var(--amber);
+  padding: 2px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.match-pct{
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--bar-color, var(--cyan));
+  flex-shrink: 0;
+}
+.match-track{
+  height: 9px;
+  border-radius: 999px;
+  background: var(--line-soft);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.match-fill{
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background: var(--bar-color, var(--cyan));
+  box-shadow: 0 0 10px -1px var(--bar-color, var(--cyan));
+  transition: width 0.8s cubic-bezier(.2,.7,.2,1);
+}
+.match-row.is-top .match-track{
+  border-color: var(--bar-color, var(--cyan));
+}
+.match-row.is-top .match-fill{
+  box-shadow: 0 0 14px 0 var(--bar-color, var(--cyan));
+}
+
 /* ---------------------------------------------------------
    RESPONSIVE — MOBILE
 --------------------------------------------------------- */
@@ -959,7 +998,8 @@ p{ margin: 0; }
   .field-group{ margin-bottom: 14px; gap: 10px; }
   .result-card{ padding: 14px 16px; margin-bottom: 10px; }
   .result-icon{ width: 46px; height: 46px; font-size: 24px; margin-bottom: 8px; }
-  .chart-container{ max-width: 170px; min-height: 160px; margin-top: 10px; padding: 8px; }
+  .match-breakdown{ padding: 10px 14px 12px; margin-top: 10px; }
+  .match-bars{ gap: 10px; }
   .fit-panel{ padding: 10px 14px; }
   .circuit-loader{ width: 140px; height: 140px; }
 }
@@ -1044,7 +1084,6 @@ svg {
 .result-title,
 .result-desc,
 .fit-name,
-.mentor-info,
 .option-text {
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -1315,6 +1354,10 @@ svg {
   .circuit-loader *,
   .dot-live {
     animation: none !important;
+  }
+
+  .match-fill{
+    transition: none !important;
   }
 }
 

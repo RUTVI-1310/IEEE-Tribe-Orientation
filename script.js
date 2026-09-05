@@ -17,55 +17,56 @@
       title: "Visual Alchemist",
       desc: "You turn ideas into visuals that attract attention.",
       traits: ["Composition", "Color sense", "Detail-driven"],
-      committee: "Design Committee",
-      mentorInitials: "PR",
-      mentorLine: "Priya R. reaches out within 48 hrs with your first task."
+      committee: "Design Committee"
     },
     drafting: {
       icon: "📖",
       title: "Story Weaver",
       desc: "You give IEEE events their official voice — reports, documentation, and structure.",
       traits: ["Clarity", "Precision", "Consistency"],
-      committee: "Drafting Committee",
-      mentorInitials: "AK",
-      mentorLine: "Aman K. reaches out within 48 hrs with your first task."
+      committee: "Drafting Committee"
     },
     media: {
       icon: "🎬",
       title: "Momentum Maker",
       desc: "You capture energy and turn moments into engaging content.",
       traits: ["Timing", "Eye for a shot", "Fast turnaround"],
-      committee: "Media Committee",
-      mentorInitials: "SN",
-      mentorLine: "Sana N. reaches out within 48 hrs with your first task."
+      committee: "Media Committee"
     },
     program: {
       icon: "⚡",
       title: "Behind-the-Scenes Hero",
       desc: "You keep the entire event moving without the audience noticing the effort.",
       traits: ["Reliability", "Calm under pressure", "Systems thinking"],
-      committee: "Program Committee",
-      mentorInitials: "RV",
-      mentorLine: "Rohan V. reaches out within 48 hrs with your first task."
+      committee: "Program Committee"
     },
     tech: {
       icon: "🧩",
       title: "Innovation Explorer",
       desc: "You enjoy building, experimenting, and bringing new ideas to life.",
       traits: ["Problem-solving", "Curiosity", "Hands-on"],
-      committee: "Tech Committee",
-      mentorInitials: "JD",
-      mentorLine: "Jaswant D. reaches out within 48 hrs with your first task."
+      committee: "Tech Committee"
     },
     publicity: {
       icon: "📣",
       title: "Hype Engineer",
       desc: "You get people through the door — pitching, announcing, and rallying the crowd.",
       traits: ["Persuasion", "Confidence", "Outreach"],
-      committee: "Publicity Committee",
-      mentorInitials: "MS",
-      mentorLine: "Meera S. reaches out within 48 hrs with your first task."
+      committee: "Publicity Committee"
     }
+  };
+
+  // Icon + display label + accent color for each committee, used to
+  // render the match-breakdown bars on the result screen. Colors are
+  // reused from the same palette the old pie chart used, so the
+  // result screen's color language stays consistent.
+  var COMMITTEE_META = {
+    design:    { icon: "🎨", label: "Design",    color: "#4F8CFF" },
+    drafting:  { icon: "📖", label: "Drafting",  color: "#2FE0FF" },
+    media:     { icon: "🎬", label: "Media",     color: "#A374FF" },
+    program:   { icon: "⚡", label: "Program",   color: "#6EE7B7" },
+    tech:      { icon: "🧩", label: "Tech",      color: "#FFB648" },
+    publicity: { icon: "📣", label: "Publicity", color: "#FF6F9E" }
   };
 
   var TIEBREAK_ORDER = ["design", "drafting", "media", "program", "tech", "publicity"];
@@ -76,7 +77,7 @@
      represented below, in the same order they appear there.
      Q14 ("hours per week") is informational only — it carries
      no scores but is still collected and sent along with the
-     result so mentors have context.
+     result for planning context.
   ========================================================= */
   var QUESTIONS = [
     {
@@ -253,7 +254,7 @@
       ]
     }
   ];
-  var chartInstance = null;
+
   /* =========================================================
      STATE
   ========================================================= */
@@ -463,8 +464,6 @@
     $("result-title").textContent = id.title;
     $("result-desc").textContent = id.desc;
     $("fit-name").textContent = id.committee;
-    $("mentor-avatar").textContent = id.mentorInitials;
-    $("mentor-info").innerHTML = "<b>Mentor —</b> " + id.mentorLine;
 
     var traitsEl = $("result-traits");
     traitsEl.innerHTML = "";
@@ -475,111 +474,66 @@
       traitsEl.appendChild(chip);
     });
 
-    // Switch to the result screen FIRST, then build the chart on the
-    // next frame. Chart.js reads the canvas's rendered size at
-    // creation time — building it before the screen is actually
-    // visible/laid out (or before a device-toolbar resize settles)
-    // is what makes it come out 0×0 / invisible.
     goTo(4, "04 / RESULT");
     submitResult(key, id, result.totals);
+    renderMatchBreakdown(result);
+  }
 
+  /**
+   * Renders the "which committees your answers pointed toward" section
+   * as a simple, sorted set of horizontal bars — one per committee that
+   * scored above zero, highest first, with your best match called out.
+   * This replaces the old 6-slice pie chart, which was hard to read at
+   * a glance (color-matching six thin slices to a legend). A sorted
+   * bar list needs no legend: the ranking and the percentages are both
+   * immediately visible.
+   */
+  function renderMatchBreakdown(result){
+    var container = $("match-bars");
+    if (!container) return;
+
+    var total = 0;
+    TIEBREAK_ORDER.forEach(function(key){ total += result.totals[key] || 0; });
+
+    var rows = TIEBREAK_ORDER
+      .map(function(key){ return { key: key, score: result.totals[key] || 0 }; })
+      .filter(function(row){ return row.score > 0; })
+      .sort(function(a, b){ return b.score - a.score; });
+
+    container.innerHTML = "";
+
+    rows.forEach(function(row, index){
+      var meta = COMMITTEE_META[row.key];
+      var pct = total > 0 ? Math.round((row.score / total) * 100) : 0;
+      var isTop = index === 0;
+
+      var el = document.createElement("div");
+      el.className = "match-row" + (isTop ? " is-top" : "");
+      el.style.setProperty("--bar-color", meta.color);
+      el.innerHTML =
+        '<div class="match-row-top">' +
+          '<span class="match-icon" aria-hidden="true">' + meta.icon + '</span>' +
+          '<span class="match-label">' + meta.label +
+            (isTop ? '<span class="match-best-chip">Best match</span>' : '') +
+          '</span>' +
+          '<span class="match-pct">' + pct + '%</span>' +
+        '</div>' +
+        '<div class="match-track"><div class="match-fill" style="width:0%"></div></div>';
+      container.appendChild(el);
+    });
+
+    // Bars start at width:0 and animate up to their real percentage on
+    // the next frame — a plain CSS transition, no charting library
+    // needed, and it can't suffer the "0×0 canvas" sizing bugs a
+    // canvas-based chart can hit when built before its screen is visible.
     requestAnimationFrame(function(){
-      renderCommitteeChart(result);
+      var fills = container.querySelectorAll(".match-fill");
+      fills.forEach(function(fill, i){
+        var pct = total > 0 ? Math.round((rows[i].score / total) * 100) : 0;
+        fill.style.width = pct + "%";
+      });
     });
   }
-
-  function renderCommitteeChart(result){
-    var canvasEl = document.getElementById("committeeChart");
-    var ctx = canvasEl.getContext("2d");
-    if (chartInstance) {
-      chartInstance.destroy(); // Destroy previous instance if retaking quiz
-    }
-
-    var pieLabels = ["Design", "Drafting", "Media", "Program", "Tech", "Publicity"];
-    var pieColors = [
-      "#4F8CFF", // Blue
-      "#2FE0FF", // Cyan
-      "#A374FF", // Violet
-      "#6EE7B7", // Mint
-      "#FFB648", // Gold
-      "#FF6F9E"  // Pink
-    ];
-    var pieData = [
-      result.totals.design || 0,
-      result.totals.drafting || 0,
-      result.totals.media || 0,
-      result.totals.program || 0,
-      result.totals.tech || 0,
-      result.totals.publicity || 0
-    ];
-
-    chartInstance = new Chart(ctx, {
-      type: "pie",
-      data: {
-        labels: pieLabels,
-        datasets: [{
-          data: pieData,
-          backgroundColor: pieColors,
-          borderColor: "#141B36",
-          borderWidth: 2,
-          hoverBorderColor: "#F3F6FF",
-          hoverBorderWidth: 2,
-          hoverOffset: 10 // slices "pop" on tap/hover — the PCB pad-lift effect
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: { animateScale: true, animateRotate: true, easing: "easeOutQuart" },
-        // Legend is drawn as separate HTML below (see renderChartLegend) —
-        // Chart.js's own bottom legend was getting squeezed to nothing
-        // inside the compact mobile chart box, which is why it wasn't
-        // showing up at all.
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: "#141B36",
-            borderColor: "#303C6C",
-            borderWidth: 1,
-            titleColor: "#F3F6FF",
-            bodyColor: "#A2B1D6",
-            titleFont: { family: "'IBM Plex Mono', monospace" },
-            bodyFont: { family: "'IBM Plex Mono', monospace" },
-            padding: 10,
-            cornerRadius: 6
-          }
-        }
-      }
-    });
-
-    renderChartLegend(pieLabels, pieColors, pieData);
-
-    // Guard against any lingering 0-size measurement (e.g. a devtools
-    // device-toolbar toggle mid-transition) by forcing one more resize
-    // once the layout has definitely settled.
-    setTimeout(function(){ if (chartInstance) chartInstance.resize(); }, 260);
-  }
-
-  function renderChartLegend(labels, colors, data){
-    var legendEl = $("chart-legend");
-    if (!legendEl) return;
-    var total = data.reduce(function(a, b){ return a + b; }, 0);
-    legendEl.innerHTML = "";
-    labels.forEach(function(label, i){
-      if (!data[i]) return; // skip committees that scored zero — keeps the legend focused
-      var pct = total > 0 ? Math.round((data[i] / total) * 100) : 0;
-      var item = document.createElement("span");
-      item.className = "legend-item";
-      item.innerHTML =
-        '<span class="legend-dot" style="background:' + colors[i] + '"></span>' +
-        label + ' <b>' + pct + '%</b>';
-      legendEl.appendChild(item);
-    });
-  }
-
-  window.addEventListener("resize", function(){
-    if (chartInstance) chartInstance.resize();
-  });
 
   /* ---------------------------------------------------------
      Backend hook (Firebase / Google Sheets / Apps Script)

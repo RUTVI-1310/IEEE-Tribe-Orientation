@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IEEE VGEC — Tribe Quiz Admin</title>
+<style>
+  :root{ color-scheme: dark; }
+  body{
+    margin:0; padding:24px; background:#0B0F1E; color:#EAEFFB;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+  }
+  h1{ font-size:20px; margin:0 0 4px; }
+  p.sub{ color:#8C9BC4; margin:0 0 20px; font-size:13px; }
+  .bar{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; align-items:center; }
+  input[type=password]{
+    background:#141B36; border:1px solid #303C6C; color:#EAEFFB;
+    padding:9px 12px; border-radius:8px; font-size:14px; min-width:220px;
+  }
+  button{
+    background:#4C8DFF; color:#06101F; border:none; padding:9px 16px;
+    border-radius:8px; font-weight:600; cursor:pointer; font-size:13px;
+  }
+  button.secondary{ background:transparent; border:1px solid #303C6C; color:#EAEFFB; }
+  button:disabled{ opacity:.5; cursor:not-allowed; }
+  .stats{ display:flex; gap:14px; margin-bottom:18px; flex-wrap:wrap; }
+  .stat{ background:#141B36; border:1px solid #303C6C; border-radius:10px; padding:12px 18px; min-width:140px; }
+  .stat b{ display:block; font-size:22px; }
+  .stat span{ color:#8C9BC4; font-size:12px; }
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  th, td{ text-align:left; padding:8px 10px; border-bottom:1px solid #212B52; white-space:nowrap; }
+  th{ color:#8C9BC4; font-weight:600; position:sticky; top:0; background:#0B0F1E; }
+  tr:hover{ background:#141B36; }
+  .table-wrap{ overflow:auto; max-height:70vh; border:1px solid #303C6C; border-radius:10px; }
+  #error{ color:#FF6B82; font-size:13px; margin-top:8px; min-height:16px; }
+  .del-btn{ background:#3a1a24; color:#FF9FB0; border:1px solid #5a2733; padding:4px 10px; font-size:11px; }
+</style>
+</head>
+<body>
+
+<h1>IEEE VGEC — Tribe Quiz Results</h1>
+<p class="sub">Enter your admin key to view submissions. The key is only kept in this browser tab.</p>
+
+<div class="bar">
+  <input type="password" id="admin-key" placeholder="Admin key" />
+  <button id="load-btn">Load results</button>
+  <button class="secondary" id="export-btn" disabled>Download CSV</button>
+  <button class="secondary" id="refresh-btn" disabled>Refresh</button>
+</div>
+<div id="error"></div>
+
+<div class="stats" id="stats" style="display:none;"></div>
+
+<div class="table-wrap" id="table-wrap" style="display:none;">
+  <table>
+    <thead>
+      <tr>
+        <th>Received</th><th>Name</th><th>Branch</th><th>Identity</th>
+        <th>Committee</th><th>Hrs/wk</th><th></th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+</div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  let currentKey = "";
+
+  function escapeHtml(str){
+    return String(str ?? "").replace(/[&<>"']/g, (c) => (
+      { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]
+    ));
+  }
+
+  async function loadResults(){
+    const key = $("admin-key").value.trim();
+    if (!key){ $("error").textContent = "Enter your admin key first."; return; }
+    currentKey = key;
+    $("error").textContent = "";
+    $("load-btn").disabled = true;
+    $("load-btn").textContent = "Loading…";
+
+    try {
+      const [resultsRes, statsRes] = await Promise.all([
+        fetch("/api/results", { headers: { "x-admin-key": key } }),
+        fetch("/api/results/stats")
+      ]);
+
+      if (resultsRes.status === 401){
+        throw new Error("Incorrect admin key.");
+      }
+      if (!resultsRes.ok) throw new Error("Server error loading results.");
+
+      const { results } = await resultsRes.json();
+      const stats = await statsRes.json();
+
+      renderStats(stats, results.length);
+      renderTable(results);
+      $("export-btn").disabled = false;
+      $("refresh-btn").disabled = false;
+    } catch (err) {
+      $("error").textContent = err.message;
+    } finally {
+      $("load-btn").disabled = false;
+      $("load-btn").textContent = "Load results";
+    }
+  }
+
+  function renderStats(stats, shown){
+    $("stats").style.display = "flex";
+    $("stats").innerHTML = `
+      <div class="stat"><b>${stats.totalResponses}</b><span>Total responses</span></div>
+      <div class="stat"><b>${stats.respondedToday}</b><span>Today</span></div>
+      <div class="stat"><b>${shown}</b><span>Loaded now</span></div>
+    `;
+  }
+
+  function renderTable(results){
+    $("table-wrap").style.display = "block";
+    $("table-body").innerHTML = results.map(r => `
+      <tr>
+        <td>${escapeHtml(new Date(r.receivedAt).toLocaleString())}</td>
+        <td>${escapeHtml(r.name)}</td>
+        <td>${escapeHtml(r.branch)}</td>
+        <td>${escapeHtml(r.identity)}</td>
+        <td>${escapeHtml(r.committee)}</td>
+        <td>${escapeHtml(r.hoursPerWeek || "—")}</td>
+        <td><button class="del-btn" data-id="${escapeHtml(r.id)}">Delete</button></td>
+      </tr>
+    `).join("");
+
+    document.querySelectorAll(".del-btn").forEach(btn => {
+      btn.addEventListener("click", () => deleteResult(btn.dataset.id));
+    });
+  }
+
+  async function deleteResult(id){
+    if (!confirm("Delete this submission? This cannot be undone.")) return;
+    try {
+      const res = await fetch("/api/results/" + id, {
+        method: "DELETE",
+        headers: { "x-admin-key": currentKey }
+      });
+      if (!res.ok) throw new Error("Could not delete that entry.");
+      loadResults();
+    } catch (err) {
+      $("error").textContent = err.message;
+    }
+  }
+
+  $("load-btn").addEventListener("click", loadResults);
+  $("refresh-btn").addEventListener("click", loadResults);
+
+  // CSV download needs the admin key sent as a header, which a plain
+  // link/navigation can't do — so we fetch it with JS and save the
+  // response as a file instead.
+  $("export-btn").addEventListener("click", async () => {
+    try {
+      const res = await fetch("/api/results/export.csv", { headers: { "x-admin-key": currentKey } });
+      if (!res.ok) throw new Error("Could not export CSV.");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "ieee-tribe-results.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      $("error").textContent = err.message;
+    }
+  });
+
+  $("admin-key").addEventListener("keydown", (e) => { if (e.key === "Enter") loadResults(); });
+</script>
+</body>
+</html>
