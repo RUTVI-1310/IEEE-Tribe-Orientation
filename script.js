@@ -541,7 +541,7 @@
      or a Firebase Cloud Function. Left inert until configured
      so the flow works standalone during testing.
   --------------------------------------------------------- */
-  var ENDPOINT_URL = "http://localhost:3000/api/results/submit";
+  var ENDPOINT_URL = "https://ieee-tribe-orientation.onrender.com/api/results/submit";
   var saveStatusEl = $("save-status");
 
   function submitResult(key, id, totals){
