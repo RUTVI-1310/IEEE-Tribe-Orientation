@@ -7,7 +7,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 
-const resultsRouter = require("./routes/results");
+const resultsRouter = require("../../../../Downloads/IEEE-Tribe-Orientation-sqlite/backend/routes/results");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -114,6 +114,12 @@ app.use("/api/results", resultsRouter);
 // Simple static admin dashboard (public/admin.html). It's plain HTML/JS
 // that asks for your admin key in the browser and calls the endpoints
 // above — nothing sensitive is baked into the file itself.
+// Visiting /admin or /admin/ directly serves admin.html, so you don't
+// have to type the filename — everything else in public/ is still
+// served normally by the static middleware below.
+app.get(["/admin", "/admin/"], (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin.html"));
+});
 app.use("/admin", express.static(path.join(__dirname, "public")));
 
 // 404 handler for anything else.

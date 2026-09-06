@@ -2,5 +2,8 @@ node_modules/
 .env
 data/results.json
 data/results.json.tmp
+data/results.db
+data/results.db-shm
+data/results.db-wal
 *.log
 .DS_Store
