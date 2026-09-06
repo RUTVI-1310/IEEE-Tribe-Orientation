@@ -13,8 +13,39 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 /* -----------------------------------------------------------
+   Startup safety checks
+----------------------------------------------------------- */
+
+// Refuse to boot in production with the default/placeholder admin key —
+// better to fail loudly at startup than silently ship an unprotected
+// admin dashboard. Locally (NODE_ENV !== "production") this only warns,
+// so beginners can still run the server before setting up a real .env.
+const adminKey = process.env.ADMIN_KEY;
+const isDefaultAdminKey = !adminKey || adminKey === "change-this-to-a-long-random-secret";
+if (isDefaultAdminKey) {
+  const msg =
+    "[startup] ADMIN_KEY is not set (or is still the default placeholder). " +
+    "Set a long random ADMIN_KEY in your .env before deploying.";
+  if (process.env.NODE_ENV === "production") {
+    console.error(msg + " Refusing to start in production.");
+    process.exit(1);
+  } else {
+    console.warn(msg + " Admin endpoints are unprotected until you fix this.");
+  }
+}
+
+/* -----------------------------------------------------------
    Security & basics
 ----------------------------------------------------------- */
+
+// When deployed behind a reverse proxy (Render, Railway, Vercel, Nginx,
+// etc.), Express sees the proxy's IP on every request unless told to
+// trust the proxy's X-Forwarded-For header. Without this, express-rate-limit
+// (and any other IP-based logic) effectively rate-limits the proxy, not
+// individual users — so a single bad actor's requests count against
+// everyone's shared limit, and the per-IP submit limiter stops working.
+// "1" trusts exactly one hop, which matches typical single-proxy PaaS setups.
+app.set("trust proxy", 1);
 
 // Sets a bunch of sane security-related HTTP headers automatically.
 // contentSecurityPolicy is turned off here only because the admin
