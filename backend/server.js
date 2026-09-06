@@ -7,7 +7,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 
-const resultsRouter = require("../../../../Downloads/IEEE-Tribe-Orientation-sqlite/backend/routes/results");
+const resultsRouter = require("./routes/results");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
