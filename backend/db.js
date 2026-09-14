@@ -50,6 +50,8 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS results (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
+    mobile TEXT,
+    semester TEXT,
     branch TEXT NOT NULL,
     identity TEXT NOT NULL,
     committee TEXT NOT NULL,
@@ -62,13 +64,25 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_results_receivedAt ON results (receivedAt);
 `);
 
+// Safe migrations if results.db was created by an older version without mobile/semester
+try {
+  db.exec(`ALTER TABLE results ADD COLUMN mobile TEXT;`);
+} catch (e) {
+  // column already exists
+}
+try {
+  db.exec(`ALTER TABLE results ADD COLUMN semester TEXT;`);
+} catch (e) {
+  // column already exists
+}
+
 // Prepared statements are compiled once and reused — faster and safer
 // than building a new SQL string for every request (this is also what
 // prevents SQL injection: values are always bound as parameters, never
 // concatenated into the query text).
 const insertStmt = db.prepare(`
-  INSERT INTO results (id, name, branch, identity, committee, hoursPerWeek, scoreBreakdown, receivedAt)
-  VALUES (@id, @name, @branch, @identity, @committee, @hoursPerWeek, @scoreBreakdown, @receivedAt)
+  INSERT INTO results (id, name, mobile, semester, branch, identity, committee, hoursPerWeek, scoreBreakdown, receivedAt)
+  VALUES (@id, @name, @mobile, @semester, @branch, @identity, @committee, @hoursPerWeek, @scoreBreakdown, @receivedAt)
 `);
 const getAllStmt = db.prepare(`SELECT * FROM results ORDER BY receivedAt DESC`);
 const countStmt = db.prepare(`SELECT COUNT(*) AS c FROM results`);
@@ -96,6 +110,8 @@ async function insert(record) {
   const row = {
     id: crypto.randomUUID(),
     name: record.name,
+    mobile: record.mobile ?? null,
+    semester: record.semester ?? null,
     branch: record.branch,
     identity: record.identity,
     committee: record.committee,

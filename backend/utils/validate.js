@@ -42,11 +42,22 @@ function validateSubmission(body) {
     return { valid: false, error: "Request body must be a JSON object." };
   }
 
-  const { name, branch, identity, committee, scoreBreakdown, hoursPerWeek } = body;
+  const { name, mobile, mobileNumber, phone, semester, branch, identity, committee, scoreBreakdown, hoursPerWeek } = body;
 
   if (!isNonEmptyString(name, 80)) {
     return { valid: false, error: "'name' is required and must be under 80 characters." };
   }
+
+  const rawMobile = mobile || mobileNumber || phone;
+  const cleanMobileDigits = rawMobile ? String(rawMobile).replace(/\D/g, "") : "";
+  if (!rawMobile || !isNonEmptyString(String(rawMobile), 25) || cleanMobileDigits.length < 10) {
+    return { valid: false, error: "'mobile' is required and must be a valid 10-digit mobile number." };
+  }
+
+  if (!isNonEmptyString(semester, 40)) {
+    return { valid: false, error: "'semester' is required and must be under 40 characters." };
+  }
+
   if (!isNonEmptyString(branch, 80)) {
     return { valid: false, error: "'branch' is required and must be under 80 characters." };
   }
@@ -84,6 +95,8 @@ function validateSubmission(body) {
     valid: true,
     data: {
       name: sanitizeString(name),
+      mobile: sanitizeString(String(rawMobile)),
+      semester: sanitizeString(semester),
       branch: sanitizeString(branch),
       identity: sanitizeString(identity),
       committee: committee.trim(),

@@ -260,6 +260,8 @@
   ========================================================= */
   var state = {
     name: "",
+    mobile: "",
+    semester: "",
     branch: "",
     current: 0,
     answers: new Array(QUESTIONS.length).fill(null), // stores the selected option's "scores" object
@@ -297,14 +299,50 @@
 
   $("start-btn").addEventListener("click", function(){
     var name = $("input-name").value.trim();
+    var mobile = $("input-mobile").value.trim();
+    var semester = $("input-semester").value;
     var branch = $("input-branch").value;
     var err = $("form-error");
-    if (!name || !branch){
-      err.textContent = "Add your name and branch to continue.";
+
+    if (!name){
+      err.textContent = "Please enter your name.";
+      $("input-name").focus();
       return;
     }
+
+    var cleanMobile = mobile.replace(/[\s\-\(\)]/g, "");
+    if (/^\+?91/.test(cleanMobile)) {
+      cleanMobile = cleanMobile.replace(/^\+?91/, "");
+    }
+
+    if (!cleanMobile){
+      err.textContent = "Please enter your mobile number.";
+      $("input-mobile").focus();
+      return;
+    }
+
+    if (!/^[6-9]\d{9}$/.test(cleanMobile)){
+      err.textContent = "Please enter a valid 10-digit mobile number.";
+      $("input-mobile").focus();
+      return;
+    }
+
+    if (!semester){
+      err.textContent = "Please select your semester.";
+      $("input-semester").focus();
+      return;
+    }
+
+    if (!branch){
+      err.textContent = "Please select your branch.";
+      $("input-branch").focus();
+      return;
+    }
+
     err.textContent = "";
     state.name = name;
+    state.mobile = cleanMobile;
+    state.semester = semester;
     state.branch = branch;
     state.current = 0;
     renderQuestion();
@@ -547,6 +585,10 @@
   function submitResult(key, id, totals){
     var payload = {
       name: state.name,
+      mobile: state.mobile,
+      mobileNumber: state.mobile,
+      phone: state.mobile,
+      semester: state.semester,
       branch: state.branch,
       identity: id.title,
       committee: id.committee,
