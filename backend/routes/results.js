@@ -30,8 +30,6 @@ router.post("/submit", submitLimiter, async (req, res) => {
 
   try {
     const saved = await db.insert(result.data);
-<<<<<<< HEAD
-=======
 
     // Forward to Google Sheets if GOOGLE_SHEETS_URL is configured
     const sheetsUrl = process.env.GOOGLE_SHEETS_URL;
@@ -41,6 +39,8 @@ router.post("/submit", submitLimiter, async (req, res) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: result.data.name,
+          mobile: result.data.mobile,
+          semester: result.data.semester,
           branch: result.data.branch,
           identity: result.data.identity,
           committee: result.data.committee,
@@ -53,7 +53,6 @@ router.post("/submit", submitLimiter, async (req, res) => {
       });
     }
 
->>>>>>> origin/main
     return res.status(201).json({ success: true, id: saved.id });
   } catch (err) {
     console.error("[POST /submit] Failed to save result:", err);
@@ -93,11 +92,8 @@ router.get("/export.csv", adminAuth, (req, res) => {
     "id",
     "receivedAt",
     "name",
-<<<<<<< HEAD
     "mobile",
     "semester",
-=======
->>>>>>> origin/main
     "branch",
     "identity",
     "committee",
@@ -127,11 +123,8 @@ router.get("/export.csv", adminAuth, (req, res) => {
         r.id,
         r.receivedAt,
         r.name,
-<<<<<<< HEAD
         r.mobile || "",
         r.semester || "",
-=======
->>>>>>> origin/main
         r.branch,
         r.identity,
         r.committee,

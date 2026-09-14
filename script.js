@@ -260,11 +260,8 @@
   ========================================================= */
   var state = {
     name: "",
-<<<<<<< HEAD
     mobile: "",
     semester: "",
-=======
->>>>>>> origin/main
     branch: "",
     current: 0,
     answers: new Array(QUESTIONS.length).fill(null), // stores the selected option's "scores" object
@@ -302,7 +299,6 @@
 
   $("start-btn").addEventListener("click", function(){
     var name = $("input-name").value.trim();
-<<<<<<< HEAD
     var mobile = $("input-mobile").value.trim();
     var semester = $("input-semester").value;
     var branch = $("input-branch").value;
@@ -347,16 +343,6 @@
     state.name = name;
     state.mobile = cleanMobile;
     state.semester = semester;
-=======
-    var branch = $("input-branch").value;
-    var err = $("form-error");
-    if (!name || !branch){
-      err.textContent = "Add your name and branch to continue.";
-      return;
-    }
-    err.textContent = "";
-    state.name = name;
->>>>>>> origin/main
     state.branch = branch;
     state.current = 0;
     renderQuestion();
@@ -599,13 +585,10 @@
   function submitResult(key, id, totals){
     var payload = {
       name: state.name,
-<<<<<<< HEAD
       mobile: state.mobile,
       mobileNumber: state.mobile,
       phone: state.mobile,
       semester: state.semester,
-=======
->>>>>>> origin/main
       branch: state.branch,
       identity: id.title,
       committee: id.committee,

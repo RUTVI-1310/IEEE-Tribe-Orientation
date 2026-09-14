@@ -42,16 +42,11 @@ function validateSubmission(body) {
     return { valid: false, error: "Request body must be a JSON object." };
   }
 
-<<<<<<< HEAD
   const { name, mobile, mobileNumber, phone, semester, branch, identity, committee, scoreBreakdown, hoursPerWeek } = body;
-=======
-  const { name, branch, identity, committee, scoreBreakdown, hoursPerWeek } = body;
->>>>>>> origin/main
 
   if (!isNonEmptyString(name, 80)) {
     return { valid: false, error: "'name' is required and must be under 80 characters." };
   }
-<<<<<<< HEAD
 
   const rawMobile = mobile || mobileNumber || phone;
   const cleanMobileDigits = rawMobile ? String(rawMobile).replace(/\D/g, "") : "";
@@ -63,8 +58,6 @@ function validateSubmission(body) {
     return { valid: false, error: "'semester' is required and must be under 40 characters." };
   }
 
-=======
->>>>>>> origin/main
   if (!isNonEmptyString(branch, 80)) {
     return { valid: false, error: "'branch' is required and must be under 80 characters." };
   }
@@ -102,11 +95,8 @@ function validateSubmission(body) {
     valid: true,
     data: {
       name: sanitizeString(name),
-<<<<<<< HEAD
       mobile: sanitizeString(String(rawMobile)),
       semester: sanitizeString(semester),
-=======
->>>>>>> origin/main
       branch: sanitizeString(branch),
       identity: sanitizeString(identity),
       committee: committee.trim(),

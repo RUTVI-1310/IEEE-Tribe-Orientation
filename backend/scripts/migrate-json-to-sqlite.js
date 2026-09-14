@@ -54,13 +54,8 @@ async function main() {
   // so we talk to the underlying table directly here instead.
   const raw = new DatabaseSync(DB_FILE);
   const insertStmt = raw.prepare(
-<<<<<<< HEAD
     `INSERT OR IGNORE INTO results (id, name, mobile, semester, branch, identity, committee, hoursPerWeek, scoreBreakdown, receivedAt)
      VALUES (@id, @name, @mobile, @semester, @branch, @identity, @committee, @hoursPerWeek, @scoreBreakdown, @receivedAt)`
-=======
-    `INSERT OR IGNORE INTO results (id, name, branch, identity, committee, hoursPerWeek, scoreBreakdown, receivedAt)
-     VALUES (@id, @name, @branch, @identity, @committee, @hoursPerWeek, @scoreBreakdown, @receivedAt)`
->>>>>>> origin/main
   );
 
   let migrated = 0;
@@ -74,11 +69,8 @@ async function main() {
     insertStmt.run({
       id: record.id || crypto.randomUUID(),
       name: record.name || "",
-<<<<<<< HEAD
       mobile: record.mobile || record.mobileNumber || record.phone || null,
       semester: record.semester || null,
-=======
->>>>>>> origin/main
       branch: record.branch || "",
       identity: record.identity || "",
       committee: record.committee || "",
